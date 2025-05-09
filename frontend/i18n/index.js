@@ -1,16 +1,16 @@
 export default {
   locales: [
     {
-      name: 'English',
-      code: 'en',
-      iso: 'en-CA',
-      file: 'en'
-    },
-    {
       name: '中文',
       code: 'zh',
       iso: 'zh-CN',
       file: 'zh'
+    },
+    {
+      name: 'English',
+      code: 'en',
+      iso: 'en-CA',
+      file: 'en'
     },
     {
       name: 'Français',
@@ -27,9 +27,9 @@ export default {
   ],
   lazy: true,
   langDir: 'i18n/',
-  defaultLocale: 'en',
+  defaultLocale: 'zh',
   vueI18n: {
-    fallbackLocale: 'en'
+    fallbackLocale: 'zh'
   },
   detectBrowserLanguage: {
     useCookie: true,
