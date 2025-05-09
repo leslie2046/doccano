@@ -3,6 +3,7 @@ services:
 
   backend:
     image: doccano/doccano:backend
+    restart: always
     volumes:
       - static_volume:/backend/staticfiles
       - media:/backend/media
@@ -14,8 +15,9 @@ services:
       CELERY_BROKER_URL: "amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@rabbitmq"
       DATABASE_URL: "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable"
       ALLOW_SIGNUP: "False"
-      DEBUG: "False"
+      DEBUG: "True"
       DJANGO_SETTINGS_MODULE: "config.settings.production"
+      CSRF_TRUSTED_ORIGINS: "http://60.171.108.62:5000,http://192.168.0.100:5000,http://192.168.100.100:5000"
     depends_on:
       - postgres
     networks:
@@ -24,6 +26,7 @@ services:
 
   celery:
     image: doccano/doccano:backend
+    restart: always
     volumes:
       - media:/backend/media
       - tmp_file:/backend/filepond-temp-uploads
@@ -41,6 +44,7 @@ services:
 
   flower:
     image: doccano/doccano:backend
+    restart: always
     entrypoint: ["/opt/bin/prod-flower.sh"]
     environment:
       PYTHONUNBUFFERED: "1"
@@ -58,6 +62,7 @@ services:
 
   rabbitmq:
     image: rabbitmq:3.10.7-alpine
+    restart: always
     environment:
       RABBITMQ_DEFAULT_USER: "${RABBITMQ_DEFAULT_USER}"
       RABBITMQ_DEFAULT_PASS: "${RABBITMQ_DEFAULT_PASS}"
@@ -67,7 +72,8 @@ services:
       - network-backend
 
   nginx:
-    image: doccano/doccano:frontend
+    image: leslie2046/doccano:frontend_1.8.4
+    restart: always
     command: >
       /bin/sh -c
       "envsubst '
@@ -83,7 +89,7 @@ services:
       - static_volume:/static
       - media:/media
     ports:
-      - 80:8080
+      - 5000:8080
     depends_on:
       - backend
     networks:
@@ -91,6 +97,7 @@ services:
 
   postgres:
     image: postgres:13.3-alpine
+    restart: always
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
