@@ -35,13 +35,15 @@ export default Vue.extend({
       const response = await this.fetchSocialLink()
       this.social = Object.entries(response)
         .map(([key, value]: any) => ({
-          provider: key,
+          id: key,
           value
         }))
-        .filter((item) => !!item.value?.authorize_url)
+        .filter((item) => !!(item.value?.href || item.value?.authorize_url))
         .map((item: any) => ({
-          ...item,
-          href: `${item.value.authorize_url}&redirect_uri=${location.origin}${item.value.redirect_path}`
+          provider: item.value.label || item.id,
+          href:
+            item.value.href ||
+            `${item.value.authorize_url}&redirect_uri=${location.origin}${item.value.redirect_path}`
         }))
     } catch (e) {
       console.error(e)

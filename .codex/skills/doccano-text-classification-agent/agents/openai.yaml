@@ -1,0 +1,4 @@
+interface:
+  display_name: "Doccano Text Classification Agent"
+  short_description: "Auto-label unannotated doccano text classification tasks."
+  default_prompt: "Use $doccano-text-classification-agent to label unannotated text classification examples in doccano."

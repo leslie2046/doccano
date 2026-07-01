@@ -60,7 +60,7 @@ INSTALLED_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
-    "allauth.socialaccount.providers.okta",
+    "allauth.socialaccount.providers.openid_connect",
     "dj_rest_auth",
     "dj_rest_auth.registration",
     "django.contrib.sites",
@@ -189,6 +189,8 @@ TEST_OUTPUT_DIR = path.join(BASE_DIR, "junitxml")
 LOGIN_URL = "/login/"
 LOGIN_REDIRECT_URL = "/projects/"
 LOGOUT_REDIRECT_URL = "/"
+SOCIALACCOUNT_LOGIN_ON_GET = True
+SOCIALACCOUNT_ADAPTER = "social.adapter.OIDCSocialAccountAdapter"
 
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
@@ -284,12 +286,36 @@ CELERY_RESULT_SERIALIZER = "json"
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
+OIDC_PROVIDER_ID = "oidc"
+OIDC_ENABLED = env.bool("OIDC_ENABLED", False)
+OIDC_PROVIDER_NAME = env("OIDC_PROVIDER_NAME", "OpenID Connect")
+OIDC_ISSUER = env("OIDC_ISSUER", "")
+OIDC_CLIENT_ID = env("OIDC_CLIENT_ID", "")
+OIDC_CLIENT_SECRET = env("OIDC_CLIENT_SECRET", "")
+OIDC_SCOPES = env.list("OIDC_SCOPES", ["openid", "profile", "email"])
+OIDC_USE_PKCE = env.bool("OIDC_USE_PKCE", True)
+OIDC_TOKEN_AUTH_METHOD = env("OIDC_TOKEN_AUTH_METHOD", "")
+
+oidc_servers = []
+if OIDC_ENABLED and OIDC_ISSUER and OIDC_CLIENT_ID and OIDC_CLIENT_SECRET:
+    oidc_server = {
+        "id": OIDC_PROVIDER_ID,
+        "name": OIDC_PROVIDER_NAME,
+        "server_url": OIDC_ISSUER,
+        "APP": {"client_id": OIDC_CLIENT_ID, "secret": OIDC_CLIENT_SECRET},
+        "SCOPE": OIDC_SCOPES,
+        "OAUTH_PKCE_ENABLED": OIDC_USE_PKCE,
+    }
+    if OIDC_TOKEN_AUTH_METHOD:
+        oidc_server["token_auth_method"] = OIDC_TOKEN_AUTH_METHOD
+    oidc_servers.append(oidc_server)
+
 SOCIALACCOUNT_PROVIDERS = {
-    "okta": {
-        "OKTA_BASE_URL": env("OAUTH_OKTA_OAUTH2_API_URL", ""),
-        "OAUTH_PKCE_ENABLED": True,
-        "APP": {"client_id": env("OAUTH_OKTA_OAUTH2_KEY", ""), "secret": env("OAUTH_OKTA_OAUTH2_SECRET", "")},
+    "openid_connect": {
+        "SERVERS": oidc_servers,
     }
 }
 
 SITE_ID = 1
+
+

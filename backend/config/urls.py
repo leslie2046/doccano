@@ -51,6 +51,8 @@ if settings.DEBUG or os.environ.get("STANDALONE", False):
     urlpatterns.append(path("favicon.ico", serve, {"document_root": static_dir, "path": "favicon.ico"}))
 
 urlpatterns += [
+    path("accounts/", include("allauth.account.urls")),
+    path("accounts/social/", include("allauth.socialaccount.urls")),
     path("admin/", admin.site.urls),
     path("api-auth/", include("rest_framework.urls")),
     path("social/", include("social.urls")),
@@ -70,3 +72,5 @@ urlpatterns += [
     path("swagger/", schema_view.with_ui("swagger", cache_timeout=0), name="schema-swagger-ui"),
     re_path("", TemplateView.as_view(template_name="index.html")),
 ]
+
+

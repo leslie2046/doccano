@@ -1,7 +1,8 @@
 from django.urls import path
 
-from .okta import OktaLogin
+from .oidc import oidc_callback, oidc_login
 
 urlpatterns = [
-    path("complete/okta-oauth2/", OktaLogin.as_view(), name="okta_login"),
+    path("login/oidc/", oidc_login),
+    path("complete/oidc/", oidc_callback),
 ]
