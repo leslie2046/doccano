@@ -3,5 +3,6 @@ export default {
   signOut: 'Ausloggen',
   username: 'Benutzername',
   password: 'Passwort',
-  socialLogin: 'Anmeldung über {provider}'
+  socialLoginSeparator: 'oder fortfahren mit',
+  socialLogin: 'Anmeldung \u00fcber {provider}'
 }
